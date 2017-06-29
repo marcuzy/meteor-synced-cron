@@ -224,8 +224,8 @@ SyncedCron.nextScheduledAtDate = function(jobName) {
   var startedAt = entry.startedAt;
 
   return !!startedAt ?
-    new Date(schedule.next(1, startedAt).getTime() + scheduleOffset) :
-    new Date(schedule.next(1).getTime() + scheduleOffset);
+    new Date(schedule.next(2, startedAt).pop().getTime() + scheduleOffset) :
+    new Date(schedule.next(2).pop().getTime() + scheduleOffset);
 }
 
 // Remove and stop the entry referenced by jobName
