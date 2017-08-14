@@ -228,6 +228,35 @@ SyncedCron.nextScheduledAtDate = function(jobName) {
     new Date(schedule.next(2).pop().getTime() + scheduleOffset);
 }
 
+// SyncedCron.nearestScheduledAtDate({
+//   timezone: String,
+//   schedule: Function,
+//   context: Object,
+//   startedAt: Date | undefined
+//   scheduleOffset: Number | undefined
+// })
+SyncedCron.nearestScheduledAtDate = function(options) {
+  check(options.timezone, String);
+  check(options.schedule, Function);
+
+  if (!!options.startedAt)
+    check(options.startedAt, Date);
+
+  if (!!options.scheduleOffset)
+    check(options.scheduleOffset, Number);
+
+  const timezone = typeof options.timezone === 'string' || typeof options.timezone === 'function' ? options.timezone : null;
+  const scheduleOffset = options.scheduleOffset || 0;
+  const scheduleContext = typeof options.context === 'object' ? options.context : {};
+  const schedule = options.schedule.call(scheduleContext, Later.parse);
+
+  this._setTimezone(timezone);
+
+  return !!options.startedAt ?
+    new Date(Later.schedule(schedule).next(1, options.startedAt).getTime() + scheduleOffset) :
+    new Date(Later.schedule(schedule).next(1).getTime() + scheduleOffset);
+}
+
 // Remove and stop the entry referenced by jobName
 SyncedCron.remove = function(jobName) {
   var entry = this._entries[jobName];
